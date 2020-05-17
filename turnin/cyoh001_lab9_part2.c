@@ -10,7 +10,7 @@
 #include <avr/io.h>
 
 enum States { Start, Up, Down, Begin, Wait, OnOff } state;
-double array[8] = { 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
+double notes[8] = { 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
 double temp = 0;
 unsigned char min = 0x00;
 unsigned char max = 0x07;
@@ -78,13 +78,13 @@ void Tick()
 	}
 	case Up:
 	{
-		temp = array[current];
+		temp = notes[current];
 		state = Wait;
 		break;
 	}
 	case Down:
 	{
-		temp = array[current];
+		temp = notes[current];
 		state = Wait;
 		break;
 	}
@@ -139,7 +139,7 @@ void Tick()
 	}
 	case Wait:
 	{
-		temp = array[current];
+		temp = notes[current];
 		set_PWM(temp);
 		break;
 	}
