@@ -13,7 +13,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "io.c"
+#include "io.h"
 
 volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1; // Start count from here, down to 0. Default 1 ms.
