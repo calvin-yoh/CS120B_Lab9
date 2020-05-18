@@ -61,13 +61,13 @@ void Tick()
 	}
 	case ON:
 	{
-		if (tempA != 0x00)
+		if (tempA == 0x00 || tempA == 0x03 || tempA == 0x05 || tempA == 0x06 || tempA == 0x07)
 		{
-			state = ON; break;
+			state = OFF; break;
 		}
 		else
 		{
-			state = OFF; break;
+			state = ON; break;
 		}
 	}
 	case OFF:
