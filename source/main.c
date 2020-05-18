@@ -43,8 +43,8 @@ void PWM_on();
 
 void Tick();
 enum States { Start, WAIT, PLAY, DOWN, PAUSE, WAIT_2 }state;
-double notes[18] = { 220.00, 220.00, 220.00, 174.61, 261.63, 220.00, 174.61, 261.63, 220.00, 329.63, 329.63, 329.63, 349.23, 207.65, 174.61, 261.63, 220.00 };
-char time[18] = { 50, 50, 50, 37, 13, 50, 37, 13, 50, 50, 50, 50, 37, 13, 50, 37, 13, 50 };
+double notes[22] = { 830.61, 622.25, 659.25, 739.99, 987.77, 880.00, 830.61, 554.37, 659.25, 739.99, 987.77, 880.00, 830.61, 493.88, 622.25, 659.25, 739.99, 830.61, 0, 830.61, 739.99, 554.37 };
+char time[22] = { 12, 12, 8, 12, 12, 8, 12, 12, 8, 12, 12, 8, 12, 12, 8, 12, 12, 8, 1, 12, 12, 23 };
 unsigned char i = 0x00;
 unsigned char k = 0x00;
 unsigned char r = 0x00;
@@ -55,7 +55,7 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00;
 	PWM_on();
 
-	TimerSet(50);
+	TimerSet(62);
 	TimerOn();
 	state = Start;
 	while (1)
@@ -102,7 +102,7 @@ void Tick()
 	}
 	case DOWN:
 	{
-		if (r < 20)
+		if (r < 24)
 		{
 			++k;
 			state = PLAY;
