@@ -1,4 +1,4 @@
-/*	Author: cyoh001
+/*/*	Author: cyoh001
  *  Partner(s) Name:
  *	Lab Section:
  *	Assignment: Lab #  Exercise #
@@ -9,7 +9,14 @@
  */
 #include <avr/io.h>
 
-enum States { Start, ON, OFF, Wait } state;
+enum States { Start, Up, Down, Begin, Wait, OnOff } state;
+double notes[8] = { 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25 };
+double temp = 0;
+unsigned char min = 0x00;
+unsigned char max = 0x07;
+unsigned char current = 0x00;
+unsigned char currentMode = 0x00;
+unsigned char offHolder = 0x00;
 unsigned char tempA = 0x00;
 
 void set_PWM(double frequency)
@@ -43,14 +50,49 @@ void Tick()
 	{
 	case Start:
 	{
+		state = Begin;
+		break;
+	}
+	case Begin:
+	{
+		if (tempA == 0x01)
+		{
+			state = Up;
+			break;
+		}
+		else if (tempA == 0x02)
+		{
+			state = Down;
+			break;
+		}
+		else if (tempA == 0x04)
+		{
+			state = OnOff;
+			break;
+		}
+		else
+		{
+			state = Begin;
+			break;
+		}
+	}
+	case Up:
+	{
+		temp = notes[current];
+		state = Wait;
+		break;
+	}
+	case Down:
+	{
+		temp = notes[current];
 		state = Wait;
 		break;
 	}
 	case Wait:
 	{
-		if (tempA != 0x00)
+		if (tempA == 0x00)
 		{
-			state = ON;
+			state = Begin;
 			break;
 		}
 		else
@@ -59,18 +101,7 @@ void Tick()
 			break;
 		}
 	}
-	case ON:
-	{
-		if (tempA == 0x00 || tempA == 0x03 || tempA == 0x05 || tempA == 0x06 || tempA == 0x07)
-		{
-			state = OFF; break;
-		}
-		else
-		{
-			state = ON; break;
-		}
-	}
-	case OFF:
+	case OnOff:
 	{
 		state = Wait;
 		break;
@@ -78,36 +109,57 @@ void Tick()
 	default:
 		break;
 	}
-	switch (state)
+	switch (state) // state actions
 	{
+	case Up:
+	{
+		if ((current + 1) > max)
+		{
+			current = max;
+			break;
+		}
+		else
+		{
+			current++;
+			break;
+		}
+	}
+	case Down:
+	{
+		if ((current - 1) < min)
+		{
+			current = min;
+			break;
+		}
+		else
+		{
+			current--;
+			break;
+		}
+	}
 	case Wait:
 	{
-		set_PWM(0);
+		temp = notes[current];
+		set_PWM(temp);
 		break;
 	}
-	case ON:
+	case OnOff:
 	{
-		if (tempA == 0x01)
+		if (currentMode == 0x01)
 		{
-			set_PWM(261.63);
+			PWM_off();
+			offHolder = current;
+			set_PWM(0);
+			currentMode = 0;
 			break;
 		}
-		else if (tempA == 0x02)
+		else
 		{
-			set_PWM(293.66);
+			PWM_on();
+			current = offHolder;
+			currentMode = 1;
 			break;
 		}
-		else if (tempA == 0x04)
-		{
-			set_PWM(329.63);
-			break;
-		}
-		break;
-	}
-	case OFF:
-	{
-		set_PWM(0);
-		break;
 	}
 	default:
 		break;
@@ -120,6 +172,7 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00;
 	state = Start;
 	PWM_on();
+	currentMode = 1;
 
 	while (1)
 	{

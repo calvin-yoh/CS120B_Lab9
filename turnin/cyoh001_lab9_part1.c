@@ -1,12 +1,12 @@
-/*	Author: cyoh001
- *  Partner(s) Name:
- *	Lab Section:
- *	Assignment: Lab #  Exercise #
- *	Exercise Description: [optional - include for your own benefit]
- *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
- */
+/*Author: cyoh001
+* Partner(s) Name :
+	*Lab Section :
+*Assignment : Lab #  Exercise #
+* Exercise Description : [optional - include for your own benefit]
+*
+*I acknowledge all content contained herein, excluding template or example
+* code, is my own original work.
+*/
 #include <avr/io.h>
 
 enum States { Start, ON, OFF, Wait } state;
@@ -61,13 +61,13 @@ void Tick()
 	}
 	case ON:
 	{
-		if (tempA != 0x00)
+		if (tempA == 0x00 || tempA == 0x03 || tempA == 0x05 || tempA == 0x06 || tempA == 0x07)
 		{
-			state = ON; break;
+			state = OFF; break;
 		}
 		else
 		{
-			state = OFF; break;
+			state = ON; break;
 		}
 	}
 	case OFF:
